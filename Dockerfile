@@ -1,9 +1,9 @@
-FROM golang:1.13-alpine as build
+FROM golang:latest as build
 ENV GO111MODULE=on
 ENV CGO_ENABLED=0
 ENV GOOS=linux
 
-RUN apk add --no-cache make git
+#RUN apk add --no-cache make git
 
 WORKDIR /go/src/github.com/netlify/gotrue
 COPY . /go/src/github.com/netlify/gotrue
@@ -11,8 +11,8 @@ COPY . /go/src/github.com/netlify/gotrue
 RUN make deps build
 
 
-FROM alpine:3.7
-RUN adduser -D -u 1000 netlify
+FROM alpine:latest
+#RUN adduser -D -u 1000 netlify
 
 RUN apk add --no-cache ca-certificates
 COPY --from=build /go/src/github.com/netlify/gotrue/gotrue /usr/local/bin/gotrue
@@ -20,5 +20,5 @@ COPY --from=build /go/src/github.com/netlify/gotrue/migrations /usr/local/etc/go
 
 ENV GOTRUE_DB_MIGRATIONS_PATH /usr/local/etc/gotrue/migrations
 
-USER netlify
+#USER netlify
 CMD ["gotrue"]
